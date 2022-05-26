@@ -1,0 +1,237 @@
+{% load static %}
+<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <!-- ===== CSS ===== -->
+        <link rel="stylesheet" href="{% static 'assets/css/styles.css' %}">
+
+        <!-- ===== BOX ICONS ===== -->
+        <link href='https://cdn.jsdelivr.net/npm/boxicons@2.0.5/css/boxicons.min.css' rel='stylesheet'>
+        
+
+        <!-- Extra CSS -->
+        <style>
+            .home__img{
+                image-rendering: auto;
+                image-rendering: crisp-edges;
+                image-rendering: pixelated;
+              
+                /* Safari seems to support, but seems deprecated and does the same thing as the others. */
+                image-rendering: -webkit-optimize-contrast;
+                height: 850px;
+                width: 400px;
+                left: 52%;
+            }
+            .about__img img{
+                width: 200px;
+                
+            }
+        </style>
+
+        <title>Portfolio responsive complete</title>
+    </head>
+    <body>
+
+        
+        <!--===== HEADER =====-->
+        <header class="l-header">
+            <nav class="nav bd-grid">
+                
+                <div>
+                    <a href="#" class="nav__logo">{{ home.name }}</a>
+                </div>
+
+                <div class="nav__menu" id="nav-menu">
+                    <ul class="nav__list">
+                        <li class="nav__item"><a href="#home" class="nav__link active">Home</a></li>
+                        <li class="nav__item"><a href="#about" class="nav__link">About</a></li>
+                        <li class="nav__item"><a href="#skills" class="nav__link">Skills</a></li>
+                        <li class="nav__item"><a href="#portfolio" class="nav__link">Portfolios</a></li>
+                        <li class="nav__item"><a href="#contact" class="nav__link">Contact</a></li>
+                    </ul>
+                </div>
+
+                <div class="nav__toggle" id="nav-toggle">
+                    <i class='bx bx-menu'></i>
+                </div>
+            </nav>
+        </header>
+
+        <main class="l-main">
+            <!--===== HOME =====-->
+            <section class="home" id="home">
+                <div class="home__container bd-grid">
+                    <h1 class="home__title"><span>{{ home.greetings_1 }}</span></h1>
+
+                    <div class="home__scroll">
+                        <a href="#about" class="home__scroll-link"><i class='bx bx-up-arrow-alt' ></i>Scroll down</a>
+                    </div>
+
+                    <img src="{{ home.picture.url }}" alt="" class="home__img">
+                </div>
+            </section>
+            
+            <!--===== ABOUT =====-->
+            <section class="about section" id="about">
+                <h2 class="section-title">About</h2>
+
+                <div class="about__container bd-grid">
+                    <div class="about__img">
+                        <img src="{{ about.profile_img.url }}" alt="">
+                    </div>
+
+                    <div>
+                        <h2 class="about__subtitle">{{ about.heading }}</h2>
+                        <span class="about__profession">{{ about.career }}</span>
+                        <p class="about__text">{{ about.description|safe }}</p>
+                        <a class="about__cv" href="\static\assets\files\Curriculum Vitae - Mantas Gustas.docx" download>Download My CV</a>
+                    </div>
+                        
+                        <div class="about__social">
+
+                            {% for profile in about.profile_set.all %}
+                                <a href="{{ profile.link }}" class="about__social-icon">
+                                    <i class='bx bxl-{{ profile.social_name }}' ></i>
+                                </a>
+                            {% endfor %}
+                            
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!--===== SKILLS =====-->
+            <section class="skills section" id="skills">
+                <h2 class="section-title">Skills</h2>
+
+                <div class="skills__container bd-grid">
+                    <div class="skills__box">
+                        {% for category in categories %}
+                        <h3 class="skills__subtitle">{{category.name}}</h3>
+                            {% for skills in category.skills_set.all %}
+                            
+                                <span class="skills__name">{{skills.skill_name}}</span>
+                            {% endfor %}
+                        {% endfor %}
+                        
+                    </div>
+
+                    <div class="skills__img">
+                        <img src="{% static 'assets/img/skill.jpg' %}" alt="">
+                    </div>
+                </div>
+            </section>
+
+            <!--===== PORTFOLIO =====-->
+            <section class="portfolio section" id="portfolio">
+                <h2 class="section-title">Portfolios</h2>
+
+                
+                <div class="portfolio__container bd-grid">
+
+                    {% for portfolio in portfolios %}
+                    
+                    <div class="portfolio__img">
+                        <img src="{{ portfolio.image.url }}" alt="">
+
+                        <div class="portfolio__link">
+                            <a href="{{ portfolio.link }}" class="portfolio__link-name " target="_blank" >View details</a>
+                        </div>
+                    </div>
+
+                    {% endfor %}
+                    
+                </div>
+                
+            </section>
+
+            
+            <!--===== CONTACT =====-->
+            <section class="contact section" id="contact">
+                <h2 class="section-title">Contact Me</h2>
+                <div class="contact__container bd-grid">
+
+
+                    <div class="contact__info">
+                        <h3 class="contact__subtitle">EMAIL</h3>
+                        <span class="contact__text">mg.sharp@mail.com</span>
+                    </div>
+                    
+                    <div class="contact__info">
+                        <h3 class="contact__subtitle">PHONE</h3>
+                        <span class="contact__text">07376049111</span>
+                    </div>
+                   
+                    
+                    {% if messages %}
+                    <ul class="messages">
+                        {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
+                            {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
+                            {{ message }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    
+                    <form class="submit__form" action="" method="post">
+                        {% csrf_token %}
+                        <div>
+                            <tr><label class="contact__subtitle" for="id_subject">Name:</label>
+                                <input id="id_subject" type="text" name="subject" maxlength="100" required placeholder="Your Name"></tr>
+                            <tr><label class="contact__subtitle" for="id_sender">Sender:</label>
+                                <input type="email" name="sender" id="id_sender" required placeholder="Your Email Address"></tr>
+                                <br/>
+                            <p><label class="contact__subtitle" for="id_message">Message:</label></p>
+                                <textarea name="message" id="id_message" required cols="0" rows="5" class="email__input"></textarea>
+                            <p><input type="submit" value="Submit" name="ContactForm">
+                                <label class="contact__subtitle" for="id_cc_myself">Cc myself:</label>
+                                <input type="checkbox" name="cc_myself" id="id_cc_myself"></p>
+                        </div>
+                    </form>
+                    {% endif %}
+            </section>
+
+        </main>
+
+        <!--===== FOOTER =====-->
+        <footer class="footer section">
+            <div class="footer__container bd-grid">
+                <div class="footer__data">
+                    <h2 class="footer__title">Mantas Gustas</h2>
+                    <p class="footer__text">I'm Mantas Gustas and this is my personal website which was created whilst watching a YouTube Portfolio tutorial</p>
+                </div>
+
+                <div class="footer__data">
+                    <h2 class="footer__title">EXPLORE</h2>
+                    <ul>
+                        <li><a href="#home" class="footer__link">Home</a></li>
+                        <li><a href="#about" class="footer__link">About</a></li>
+                        <li><a href="#skills" class="footer__link">Skills</a></li>
+                        <li><a href="#portfolio" class="footer__link">PortfoliosS</a></li>
+                        <li><a href="#Contact" class="footer__link">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer__data">
+                    <h2 class="footer__title">FOLLOW</h2>
+                    <a href="https://uk.linkedin.com/in/mantas-gustas-442b43168?trk=people-guest_people_search-card&original_referer=https%3A%2F%2Fuk.linkedin.com%2Fpub%2Fdir%3FfirstName%3DMantas%26lastName%3DGustas%26trk%3Dhomep" 
+                        class="footer__social" target="_blank"><i class='bx bxl-linkedin'></i></a>
+                    <a href="https://github.com/Mantas-Gustas" class="footer__social" target="_blank"><i class='bx bxl-github' target="_blank"></i></a>
+                    <!-- <a href="#" class="footer__social"><i class='bx bxl-sololearn' ></i></a> -->
+                </div>
+
+
+            </div>
+        </footer>
+
+        <!--===== SCROLL REVEAL =====-->
+        <script src="https://unpkg.com/scrollreveal"></script>
+
+        <!--===== MAIN JS =====-->
+        <script src="{% static 'assets/js/main.js' %}"></script>
+    </body>
+</html>
